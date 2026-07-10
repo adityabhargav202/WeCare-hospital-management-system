@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 
@@ -13,10 +12,7 @@ import { seedDefaultDepartments } from './server/controllers/departmentControlle
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function startFullStackServer() {
   console.log('Connecting to MongoDB Atlas...');
