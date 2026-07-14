@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
 const appointmentSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    unique: true,
+    sparse: true,
+    trim: true,
+  },
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -44,7 +50,7 @@ const appointmentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'Cancelled', 'Completed', 'scheduled', 'cancelled'],
+    enum: ['Pending', 'Approved', 'Confirmed', 'Rejected', 'Cancelled', 'Completed', 'scheduled', 'cancelled'],
     default: 'Pending',
   },
   createdAt: {
@@ -74,10 +80,13 @@ const appointmentSchema = new mongoose.Schema({
   timeSlot: {
     type: String,
   }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 });
 
 // Pre-save to keep frontend and backend naming perfectly synchronized
-appointmentSchema.pre('save', function (next) {
+appointmentSchema.pre('save', function () {
   if (this.appointmentDate && !this.date) {
     this.date = this.appointmentDate;
   } else if (this.date && !this.appointmentDate) {
@@ -100,8 +109,6 @@ appointmentSchema.pre('save', function (next) {
   if (this.status === 'scheduled') {
     // Treat as Approved or Pending depending on context, or keep scheduled
   }
-
-  next();
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);

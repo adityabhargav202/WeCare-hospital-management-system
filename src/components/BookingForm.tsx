@@ -80,6 +80,13 @@ export default function BookingForm({
   const handleDepartmentChange = (deptId: string) => {
     setSelectedDeptId(deptId);
     setSelectedDocId(''); // Reset doctor choice
+    setErrors((prev) => ({ ...prev, department: '', doctor: '' }));
+  };
+
+  // Handle doctor card selection - clears the stale validation message immediately
+  const handleDoctorSelect = (docId: string) => {
+    setSelectedDocId(docId);
+    setErrors((prev) => ({ ...prev, doctor: '' }));
   };
 
   // Filter doctors based on selected department
@@ -362,7 +369,7 @@ export default function BookingForm({
                       <div
                         key={doc.id}
                         id={`choose-doc-${doc.id}`}
-                        onClick={() => setSelectedDocId(doc.id)}
+                        onClick={() => handleDoctorSelect(doc.id)}
                         className={`p-4 rounded-xl border transition-all cursor-pointer flex items-center space-x-3 ${
                           selectedDocId === doc.id
                             ? 'border-blue-500 bg-blue-50/40 ring-1 ring-blue-500'
@@ -373,6 +380,11 @@ export default function BookingForm({
                           src={doc.image}
                           alt={doc.name}
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name.replace(/^Dr\.?\s*/i, ''))}&background=DBEAFE&color=1D4ED8&bold=true`;
+                          }}
                           className="w-12 h-12 rounded-xl object-cover border border-slate-100 flex-shrink-0"
                         />
                         <div className="min-w-0">
@@ -405,6 +417,10 @@ export default function BookingForm({
                     src={selectedDoctorDetails.image}
                     alt={selectedDoctorDetails.name}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedDoctorDetails.name.replace(/^Dr\.?\s*/i, ''))}&background=DBEAFE&color=1D4ED8&bold=true`;
+                    }}
                     className="w-14 h-14 rounded-xl object-cover border border-slate-100 flex-shrink-0"
                   />
                   <div>

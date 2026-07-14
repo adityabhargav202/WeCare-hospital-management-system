@@ -41,7 +41,7 @@ const departmentSchema = new mongoose.Schema({
 });
 
 // Pre-save to auto-sync properties
-departmentSchema.pre('save', function (next) {
+departmentSchema.pre('save', function () {
   if (this.name && !this.id) {
     this.id = this.name.toLowerCase().replace(/\s+/g, '-');
   }
@@ -53,7 +53,6 @@ departmentSchema.pre('save', function (next) {
   if (this.description && !this.detailedDescription) {
     this.detailedDescription = this.description;
   }
-  next();
 });
 
 const Department = mongoose.model('Department', departmentSchema);

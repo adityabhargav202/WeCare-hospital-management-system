@@ -85,10 +85,13 @@ const doctorSchema = new mongoose.Schema({
       default: '09:00 AM - 05:00 PM',
     }
   }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 });
 
 // Sync compound virtuals or pre-save triggers to make sure requested and frontend fields are always in sync
-doctorSchema.pre('save', function (next) {
+doctorSchema.pre('save', function () {
   // Sync specialization <-> specialties
   if (this.specialization && (!this.specialties || this.specialties.length === 0)) {
     this.specialties = [this.specialization];
@@ -122,8 +125,6 @@ doctorSchema.pre('save', function (next) {
   if (this.availableTime) {
     this.availability.hours = this.availableTime;
   }
-
-  next();
 });
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
